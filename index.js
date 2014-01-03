@@ -13,20 +13,25 @@ function intersection(func1, func2) {
 }
 
 
-function filterOperation(cond) {
+function filterOperation(cond, negated) {
     function filter(resources) {
-        return resources.filter(cond);
+        return resources.filter(negated ? complement(cond) : cond);
     }
 
     filter.type = function(type) {
         return filterOperation(intersection(function(resource) {
             return resource.type() === type;
-        }, cond));
+        }, cond), negated);
     };
 
-    filter.not = filterOperation(complement(cond));
+    // Need to do it dynamically to avoid infinite recursion
+    Object.defineProperty(filter, 'not', {
+        get: function() {
+            return filterOperation(cond, ! negated);
+        }
+    });
 
     return filter;
 }
 
-module.exports = filterOperation(identity);
+module.exports = filterOperation(identity, false);
