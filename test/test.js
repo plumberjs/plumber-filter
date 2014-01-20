@@ -13,8 +13,8 @@ describe('filter', function(){
 
   beforeEach(function() {
     resources = [
-      createResource({type: 'js',  path: 'path/to/file.js'}),
-      createResource({type: 'css', path: 'path/to/file.css'})
+      createResource({type: 'javascript', path: 'path/to/file.js'}),
+      createResource({type: 'css',        path: 'path/to/file.css'})
     ];
   });
 
@@ -37,7 +37,7 @@ describe('filter', function(){
     });
 
     it('should filter resources by type', function(){
-      var filtered = filter.type('js')(resources);
+      var filtered = filter.type('javascript')(resources);
       filtered.length.should.equal(1);
       filtered[0].should.equal(resources[0]);
     });
@@ -47,17 +47,17 @@ describe('filter', function(){
   describe('#not', function() {
     it('should be a function', function(){
       filter.not.should.be.type('function');
-      filter.type('js').not.should.be.type('function');
+      filter.type('javascript').not.should.be.type('function');
     });
 
     it('should invert a type filter when used as prefix', function(){
-      var filtered = filter.not.type('js')(resources);
+      var filtered = filter.not.type('javascript')(resources);
       filtered.length.should.equal(1);
       filtered[0].should.equal(resources[1]);
     });
 
     it('should invert a type filter when used as postfix', function(){
-      var filtered = filter.type('js').not(resources);
+      var filtered = filter.type('javascript').not(resources);
       filtered.length.should.equal(1);
       filtered[0].should.equal(resources[1]);
     });
