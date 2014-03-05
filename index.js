@@ -1,3 +1,5 @@
+var operation = require('plumber').operation;
+
 function identity(x){ return x; }
 
 function complement(func) {
@@ -14,9 +16,9 @@ function intersection(func1, func2) {
 
 
 function filterOperation(cond, negated) {
-    function filter(resources) {
+    var filter = operation(function(resources) {
         return resources.filter(negated ? complement(cond) : cond);
-    }
+    });
 
     filter.type = function(type) {
         return filterOperation(intersection(function(resource) {
