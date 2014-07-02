@@ -1,6 +1,6 @@
 require('should');
 
-var runOperation = require('plumber-util-test').runOperation;
+var runAndCompleteWith = require('plumber-util-test').runAndCompleteWith;
 
 var Resource = require('plumber').Resource;
 
@@ -8,6 +8,10 @@ var filter = require('..');
 
 function createResource(params) {
   return new Resource(params);
+}
+
+function resourcesError() {
+  chai.assert(false, "error in resources observable");
 }
 
 
@@ -27,12 +31,11 @@ describe('filter', function(){
   });
 
   it('should let all resources through by default', function(done){
-    runOperation(filter, resources).resources.toArray(function(filtered) {
+    runAndCompleteWith(filter, resources, function(filtered) {
       filtered.length.should.equal(2);
       filtered[0].should.equal(resources[0]);
       filtered[1].should.equal(resources[1]);
-      done();
-    });
+    }, resourcesError, done);
   });
 
 
@@ -42,11 +45,10 @@ describe('filter', function(){
     });
 
     it('should filter resources by type', function(done){
-      runOperation(filter.type('javascript'), resources).resources.toArray(function(filtered) {
+      runAndCompleteWith(filter.type('javascript'), resources, function(filtered) {
         filtered.length.should.equal(1);
         filtered[0].should.equal(resources[0]);
-        done();
-      });
+      }, resourcesError, done);
     });
   });
 
@@ -58,19 +60,17 @@ describe('filter', function(){
     });
 
     it('should invert a type filter when used as prefix', function(done){
-      runOperation(filter.not.type('javascript'), resources).resources.toArray(function(filtered) {
+      runAndCompleteWith(filter.not.type('javascript'), resources, function(filtered) {
         filtered.length.should.equal(1);
         filtered[0].should.equal(resources[1]);
-        done();
-      });
+      }, resourcesError, done);
     });
 
     it('should invert a type filter when used as postfix', function(done){
-      runOperation(filter.type('javascript').not, resources).resources.toArray(function(filtered) {
+      runAndCompleteWith(filter.type('javascript').not, resources, function(filtered) {
         filtered.length.should.equal(1);
         filtered[0].should.equal(resources[1]);
-        done();
-      });
+      }, resourcesError, done);
     });
   });
 
